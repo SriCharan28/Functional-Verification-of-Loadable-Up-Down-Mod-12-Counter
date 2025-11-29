@@ -1,104 +1,129 @@
-# ----------------------------------------
+# ============================================================
 # SETTINGS
-# ----------------------------------------
-TOP          = counter_top
-UCDB         = coverage.ucdb
+# ============================================================
+TOP       = counter_top
+TESTS     = TEST1 TEST2           # <--- Add/remove testcases here
 
-FUNC_DIR     = cov_func_html
-CODE_DIR     = cov_code_html
-COMBO_DIR    = cov_html
+UCDB_DIR  = ucdb_runs
+MERGED    = merged.ucdb
 
-FUNC_INDEX   = $(FUNC_DIR)/index.html
-CODE_INDEX   = $(CODE_DIR)/index.html
-COMBO_INDEX  = $(COMBO_DIR)/index.html
+FUNC_DIR  = cov_func_html
+CODE_DIR  = cov_code_html
+ALL_DIR   = cov_html
 
-# ----------------------------------------
+FUNC_INDEX = $(FUNC_DIR)/index.html
+CODE_INDEX = $(CODE_DIR)/index.html
+ALL_INDEX  = $(ALL_DIR)/index.html
+
+
+# ============================================================
 # HELP
-# ----------------------------------------
+# ============================================================
 help:
 	@echo ""
-	@echo "Coverage Makefile Commands"
-	@echo "--------------------------"
-	@echo "make compile     - Compile with full coverage enabled"
-	@echo "make run         - Run simulation and save UCDB"
-	@echo "make report      - Generate ALL reports (functional + code + combined)"
-	@echo "make func_report - Generate FUNCTIONAL coverage report"
-	@echo "make code_report - Generate CODE coverage report"
-	@echo "make combo_report- Generate combined full coverage report"
-	@echo "make view_func   - View functional coverage report"
-	@echo "make view_code   - View code coverage report"
-	@echo "make view_combo  - View combined report"
-	@echo "make clean       - Clean all generated files"
+	@echo "Questa Regression + Coverage"
+	@echo "----------------------------"
+	@echo "make compile         - Compile RTL + TB"
+	@echo "make run TEST=T      - Run simulation for one testcase"
+	@echo "make regress         - Run all tests + merge UCDB"
+	@echo "make report          - Generate functional + code + combined reports"
+	@echo "make view_func       - View functional coverage report"
+	@echo "make view_code       - View code coverage report"
+	@echo "make view_combo      - View combined coverage report"
+	@echo "make clean           - Clean all output"
 	@echo ""
 
-# Default workflow
-all: clean compile run report view_combo
 
-# ----------------------------------------
+# ============================================================
 # COMPILE
-# ----------------------------------------
+# ============================================================
 compile:
 	vlib work
-	vmap work work
-	vlog +acc +cover=bcesft -work work counter.sv
+	vlog +acc +cover=bcesft test.sv
 
-# ----------------------------------------
-# RUN (Create UCDB)
-# ----------------------------------------
+
+# ============================================================
+# RUN ONE TESTCASE
+# Generates:  ucdb_runs/TEST1.ucdb, ucdb_runs/TEST2.ucdb, etc.
+# ============================================================
 run:
+	@if [ -z "$$TEST" ]; then \
+		echo "ERROR: Use  make run TEST=TEST1"; exit 1; \
+	fi
+	mkdir -p $(UCDB_DIR)
 	vsim -coverage -c work.$(TOP) \
-		-do "log -r /*; run -all; coverage save -onexit $(UCDB); quit -f" \
-		-l sim.log
+		-do "run -all; coverage save -onexit $(UCDB_DIR)/$$TEST.ucdb; quit -f" \
+		-l sim_$$TEST.log +$$TEST
 
-# ----------------------------------------
+
+# ============================================================
+# FULL REGRESSION FOR ALL TESTS
+# ============================================================
+regress:
+	@echo "Running regression for tests: $(TESTS)"
+	@for t in $(TESTS); do \
+		echo ""; \
+		echo "=============================="; \
+		echo " Running TEST = $$t"; \
+		echo "=============================="; \
+		$(MAKE) run TEST=$$t || exit 1; \
+	done
+
+	@echo "Merging UCDB files..."
+	vcover merge $(MERGED) $(UCDB_DIR)/*.ucdb
+
+
+# ============================================================
 # FUNCTIONAL COVERAGE REPORT
-# (shows hit/miss for each bin)
-# ----------------------------------------
+# Shows bin hits/misses individually
+# ============================================================
 func_report:
 	vcover report -html -cvg -details -nocompactcrossbins -directive -verbose \
-		-output $(FUNC_DIR) $(UCDB)
+		-output $(FUNC_DIR) $(MERGED)
 
-# ----------------------------------------
+
+# ============================================================
 # CODE COVERAGE REPORT
-# ----------------------------------------
+# ============================================================
 code_report:
 	vcover report -html -codeAll -details -verbose \
-		-output $(CODE_DIR) $(UCDB)
+		-output $(CODE_DIR) $(MERGED)
 
-# ----------------------------------------
-# COMBINED REPORT
-# ----------------------------------------
+
+# ============================================================
+# COMBINED COVERAGE REPORT
+# ============================================================
 combo_report:
 	vcover report -html -codeAll -cvg -assert -details -verbose \
-		-output $(COMBO_DIR) $(UCDB)
+		-output $(ALL_DIR) $(MERGED)
 
 
-# ----------------------------------------
+# ============================================================
 # GENERATE ALL REPORTS
-# ----------------------------------------
+# ============================================================
 report: func_report code_report combo_report
 
-# ----------------------------------------
+
+# ============================================================
 # OPEN REPORTS
-# ----------------------------------------
+# ============================================================
 view_func:
-	@if [ -f $(FUNC_INDEX) ]; then \
-		xdg-open $(FUNC_INDEX) 2>/dev/null || true; \
-	else echo "Functional report missing! Run: make func_report"; fi
+	@if [ -f $(FUNC_INDEX) ]; then xdg-open $(FUNC_INDEX); \
+	else echo "Run: make func_report"; fi
 
 view_code:
-	@if [ -f $(CODE_INDEX) ]; then \
-		xdg-open $(CODE_INDEX) 2>/dev/null || true; \
-	else echo "Code report missing! Run: make code_report"; fi
+	@if [ -f $(CODE_INDEX) ]; then xdg-open $(CODE_INDEX); \
+	else echo "Run: make code_report"; fi
 
 view_combo:
-	@if [ -f $(COMBO_INDEX) ]; then \
-		xdg-open $(COMBO_INDEX) 2>/dev/null || true; \
-	else echo "Combined report missing! Run: make combo_report"; fi
+	@if [ -f $(ALL_INDEX) ]; then xdg-open $(ALL_INDEX); \
+	else echo "Run: make combo_report"; fi
 
-# ----------------------------------------
+
+# ============================================================
 # CLEAN
-# ----------------------------------------
+# ============================================================
 clean:
-	rm -rf work transcript* vsim.wlf sim.log $(UCDB) \
-		$(FUNC_DIR) $(CODE_DIR) $(COMBO_DIR)
+	rm -rf work transcript* *.log vsim.wlf \
+		$(UCDB_DIR) $(MERGED) \
+		$(FUNC_DIR) $(CODE_DIR) $(ALL_DIR)
