@@ -533,7 +533,6 @@ input logic [3:0] data_in,data_out;
 
 property reset;
 	@(posedge clk)
-		//rst |=> data_out==0;
 		rst |-> data_out==0;
 endproperty
 
@@ -552,7 +551,6 @@ endproperty
 property load_data;
 	@(posedge clk)
 		disable iff(rst)
-			//load |=> data_out == data_in;	
 			load |-> data_out == data_in;	
 endproperty
 
@@ -625,19 +623,7 @@ module counter_top;
 	end
 	
 	initial
-	begin
-		/*
-		//number_of_transactions=10;
-		test_h=new(vif,vif,vif);
-		test_h.build;
-		test_h.run;
-		$display("====================================================================");
-		$display("VERIFICATION COMPLETED");
-		$display("====================================================================");
-		$stop;
-		//$finish;
-		*/
-		         
+	begin   
 		if($test$plusargs("TEST1"))
            	begin
                 	test_h=new(vif,vif,vif);
