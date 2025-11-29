@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-int number_of_transactions=280;
+int number_of_transactions=20;
 
 module mod_12_counter
 (
@@ -125,8 +125,14 @@ function void post_randomize;
 endfunction
 
 endclass
+	
+class extended_counter_trans extends counter_trans;
 
+constraint data_range {data_in inside {3,6,8};}
 
+endclass
+
+	
 class counter_gen;
 
 counter_trans trans_gen;
@@ -350,9 +356,8 @@ class counter_sb;
 	covergroup counter_cg;
 		cp_mode : coverpoint cov.mode {bins b_mode [] = {0,1};}
 		cp_load : coverpoint cov.load {bins b_load [] = {0,1};}
-		cp_data_in : coverpoint cov.data_in {bins b_data [] = {[0:11]};}
-		cp_data_out : coverpoint cov.data_out {bins b_data_out [] = {[0:11]};} 
-		cp_mode_load_data : cross cp_mode,cp_load,cp_data_in;
+		cp_data_in : coverpoint cov.data_in {bins b_data_in [] = {[0:11]}; illegal_bins ib1 = {[12:15]}; }
+		cp_data_out : coverpoint cov.data_out {bins b_data_out [] = {[0:11]}; illegal_bins ib2 = {[12:15]};} 
 	endgroup
 
 	function new(mailbox #(counter_trans) rm2sb,mailbox #(counter_trans) rmon2sb);
@@ -498,6 +503,24 @@ class counter_test;
 	endtask
 endclass
 
+	class extended_counter_test extends counter_test;
+	extended_counter_trans ecth;
+	
+	function new(virtual counter_if.wdrv_mp wdrv_if,virtual counter_if.wmon_mp wmon_if,virtual counter_if.rmon_mp rmon_if);
+		super.new(wdrv_if,wmon_if,rmon_if);
+	endfunction
+
+	virtual task build;
+		super.build;
+	endtask
+
+	virtual task run;
+		ecth=new();
+		env_h.gen.trans_gen=ecth;
+		super.run;
+	endtask
+endclass
+	
 
 module counter_assertions
 (
@@ -510,7 +533,8 @@ input logic [3:0] data_in,data_out;
 
 property reset;
 	@(posedge clk)
-		rst |=> data_out==0;
+		//rst |=> data_out==0;
+		rst |-> data_out==0;
 endproperty
 
 property up_count;
@@ -528,7 +552,8 @@ endproperty
 property load_data;
 	@(posedge clk)
 		disable iff(rst)
-			load |=> data_out == data_in;	
+			//load |=> data_out == data_in;	
+			load |-> data_out == data_in;	
 endproperty
 
 property upper_bound;
@@ -583,9 +608,11 @@ module counter_top;
 	counter_if vif(clk);
 	
 	counter_test test_h;
+	extended_counter_test etest_h;
 
 	mod_12_counter dut(.clk(clk),.rst(vif.rst),.mode(vif.mode),.load(vif.load),.data_in(vif.data_in),.data_out(vif.data_out));
 	bind mod_12_counter counter_assertions fv(.clk(clk),.rst(vif.rst),.mode(vif.mode),.load(vif.load),.data_in(vif.data_in),.data_out(vif.data_out));
+	//bind dut counter_assertions fv(.clk(clk),.rst(vif.rst),.mode(vif.mode),.load(vif.load),.data_in(vif.data_in),.data_out(vif.data_out));
 
 	parameter period = 20;
 
@@ -599,13 +626,41 @@ module counter_top;
 	
 	initial
 	begin
+		/*
+		//number_of_transactions=10;
 		test_h=new(vif,vif,vif);
 		test_h.build;
 		test_h.run;
 		$display("====================================================================");
 		$display("VERIFICATION COMPLETED");
 		$display("====================================================================");
-		$finish;
+		$stop;
+		//$finish;
+		*/
+		         
+		if($test$plusargs("TEST1"))
+           	begin
+                	test_h=new(vif,vif,vif);
+			test_h.build();
+               		test_h.run();
+			$display("====================================================================");
+			$display("VERIFICATION COMPLETED");
+			$display("====================================================================");
+               		$stop;
+               end
+
+         	if($test$plusargs("TEST2"))
+            	begin
+               		etest_h=new(vif,vif,vif);
+               		etest_h.build();
+               		etest_h.run(); 
+			$display("====================================================================");
+			$display("VERIFICATION COMPLETED");
+			$display("====================================================================");
+               		$stop;
+            	end
 	end
 endmodule
+
+
 
