@@ -610,8 +610,7 @@ module counter_top;
 
 	mod_12_counter dut(.clk(clk),.rst(vif.rst),.mode(vif.mode),.load(vif.load),.data_in(vif.data_in),.data_out(vif.data_out));
 	bind mod_12_counter counter_assertions fv(.clk(clk),.rst(vif.rst),.mode(vif.mode),.load(vif.load),.data_in(vif.data_in),.data_out(vif.data_out));
-	//bind dut counter_assertions fv(.clk(clk),.rst(vif.rst),.mode(vif.mode),.load(vif.load),.data_in(vif.data_in),.data_out(vif.data_out));
-
+	
 	parameter period = 20;
 
 	always
