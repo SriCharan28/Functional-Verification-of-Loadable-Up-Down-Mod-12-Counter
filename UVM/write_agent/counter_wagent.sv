@@ -7,7 +7,7 @@ class counter_wagent extends uvm_agent;
 	counter_sequencer seqrh;
 	counter_env_config cfg;
 
-	function new(string name = "counter_ragent",uvm_component parent);
+	function new(string name = "counter_wagent",uvm_component parent);
 		super.new(name,parent);
 	endfunction
 
@@ -27,5 +27,6 @@ class counter_wagent extends uvm_agent;
 		if(cfg.write_agent_is_active==UVM_ACTIVE)
 			drvh.seq_item_port.connect(seqrh.seq_item_export);
 	endfunction
+
 
 endclass
