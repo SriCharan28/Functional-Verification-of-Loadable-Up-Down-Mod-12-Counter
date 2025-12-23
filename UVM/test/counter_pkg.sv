@@ -17,6 +17,7 @@ package counter_pkg;
 	`include "counter_scoreboard.sv";
 	`include "counter_env.sv";
 	`include "counter_test.sv";
-	//`include "counter_assertions.sv";
+
 endpackage
+
 
