@@ -2,7 +2,6 @@ package counter_pkg;
 	
 	import uvm_pkg::*;
 	
-	//int no_of_trans=10;
 	int no_of_trans=40;
 
 	`include "uvm_macros.svh";
@@ -20,3 +19,4 @@ package counter_pkg;
 	`include "counter_test.sv";
 	//`include "counter_assertions.sv";
 endpackage
+
