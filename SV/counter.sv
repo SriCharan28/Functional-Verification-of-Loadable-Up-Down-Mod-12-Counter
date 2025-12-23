@@ -573,10 +573,8 @@ a_rst : assert property (reset)
 
 a_up : assert property (up_count)
 		$display("Up Count Assertion Pass at",$time);
-		//$strobe("Up Count Assertion Pass at",$time);
 	else
 		$display("Up Count Assertion Fail at",$time);
-		//$strobe("Up Count Assertion Fail at",$time);
 
 a_down : assert property (down_count)
 		$display("Down Count Assertion Pass at",$time);
