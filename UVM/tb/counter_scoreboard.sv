@@ -94,19 +94,12 @@ class counter_scoreboard extends uvm_scoreboard;
 		end
 		trans_fc.copy(trans_wmon);
 		trans_fc.data_out=trans_rmon.data_out;
-		/*
-		trans_fc.rst=trans_rmon.rst;
-		trans_fc.load=trans_rmon.load;
-		trans_fc.mode=trans_rmon.mode;
-		trans_fc.data_in=trans_rmon.data_in;
-		trans_fc.data_out=trans_rmon.data_out;
-		*/
-		//trans_fc.data_out=trans_ref.data_out;
 		counter_cg.sample();
 	endtask
 
 	function void report_phase(uvm_phase phase);
 		`uvm_info("uvm_scoreboard",$sformatf("functional coverage = %0.2f",counter_cg.get_coverage()),UVM_LOW);
 	endfunction
+
 
 endclass
