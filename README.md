@@ -2,7 +2,7 @@ This repository contains the implementation of the design of loadable up-down mo
 
 The SV folder contains 2 files :-
 1) "counter.sv" - this file contains the following design, interface, package, layered testbench and assertion programs :-
-    1) design module ofloadable up-down mod-12 counter.
+    1) design module of loadable up-down mod-12 counter.
     2) interface of loadable up-down mod-12 counter.
     3) transaction class of loadable up-down mod-12 counter.
     4) sequence class of loadable up-down mod-12 counter.
