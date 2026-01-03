@@ -2,7 +2,7 @@ This repository contains the implementation of the design of loadable mod-12 cou
 
 The SV folder contains 2 files :-
 1) "counter.sv" - this file contains the following programs that integrates functional coverage and assertions.
-  1) design module of loadable mod-12 counter.
+    1) design module of loadable mod-12 counter.
   2) interface of loadable mod-12 counter.
   3) transaction class of loadable mod-12 counter.
   4) sequence class of loadable mod-12 counter.
