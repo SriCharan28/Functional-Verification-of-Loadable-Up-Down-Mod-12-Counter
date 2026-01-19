@@ -9,8 +9,8 @@ The SV folder contains 2 files :-
     5) driver class of loadable up-down mod-12 counterr.
     6) write monitor class of loadable up-down mod-12 counter.
     7) read monitor class of loadable up-down mod-12 counter.
-    8) environment class of loadable up-down mod-12 counter.
-    9) scoreboard class of loadable up-down mod-12 counter.
+    8) scoreboard class of loadable up-down mod-12 counter.
+    9) environment class of loadable up-down mod-12 counter.
     10) test class of loadable up-down mod-12 counter.
     11) package of loadable up-down mod-12 counter.
     12) assertion module of loadable up-down mod-12 counter.
