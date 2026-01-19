@@ -5,17 +5,16 @@ The SV folder contains 2 files :-
     1) design module of loadable up-down mod-12 counter.
     2) interface of loadable up-down mod-12 counter.
     3) transaction class of loadable up-down mod-12 counter.
-    4) sequence class of loadable up-down mod-12 counter.
-    5) generator class of loadable up-down mod-12 counterr.
-    6) driver class of loadable up-down mod-12 counterr.
-    7) write monitor class of loadable up-down mod-12 counter.
-    8) read monitor class of loadable up-down mod-12 counter.
-    9) environment class of loadable up-down mod-12 counter.
-    10) scoreboard class of loadable up-down mod-12 counter.
-    11) test class of loadable up-down mod-12 counter.
-    12) package of loadable up-down mod-12 counter.
-    13) assertion module of loadable up-down mod-12 counter.
-    14) top tb module of loadable up-down mod-12 counter
+    4) generator class of loadable up-down mod-12 counterr.
+    5) driver class of loadable up-down mod-12 counterr.
+    6) write monitor class of loadable up-down mod-12 counter.
+    7) read monitor class of loadable up-down mod-12 counter.
+    8) environment class of loadable up-down mod-12 counter.
+    9) scoreboard class of loadable up-down mod-12 counter.
+    10) test class of loadable up-down mod-12 counter.
+    11) package of loadable up-down mod-12 counter.
+    12) assertion module of loadable up-down mod-12 counter.
+    13) top tb module of loadable up-down mod-12 counter
 2) "Makefile" - this file is used to compile the program, run the program, perform regression testing, generate code, functional and combined coverage reports view these reports in firefox.
 
 The UVM folder contains 6 folders :-
